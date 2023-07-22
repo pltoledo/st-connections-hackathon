@@ -1,0 +1,19 @@
+[[source]]
+url = "https://pypi.org/simple"
+verify_ssl = true
+name = "pypi"
+
+[packages]
+streamlit = "*"
+chromadb = "*"
+pandas = "*"
+install = "*"
+pysqlite3-binary = "*"
+
+[dev-packages]
+flake8 = "*"
+pre-commit = "*"
+ipykernel = "*"
+
+[requires]
+python_version = "3.10"
