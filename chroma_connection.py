@@ -20,28 +20,30 @@ _CHROMA_CLIENT_PARAMS = {
 class ChromaDBConnection(ExperimentalBaseConnection[chromadb.API]):
     def _connect(self, **kwargs) -> chromadb.Client:
         kwargs = deepcopy(kwargs)
-        mode = kwargs.get("mode", "in-memory")
+        mode = kwargs.pop("mode", "in-memory")
         if mode not in _CHROMA_CLIENT_PARAMS:
             raise ValueError(
                 f"Mode {mode} not supported. Please choose one of {list(_CHROMA_CLIENT_PARAMS.keys())}"
             )
-        client_param_kwargs = extract_from_dict(_CHROMA_CLIENT_PARAMS[mode], kwargs)
-        client_param_kwargs = {f"chroma_{k}": v for k, v in client_param_kwargs.items()}
-        client_params = ChainMap(client_param_kwargs, self._secrets.to_dict())
+        secrets_params = self._secrets.to_dict()
+        settings_secrets_params = secrets_params.pop("settings", {})
 
-        settings_kwargs = ChainMap(kwargs, self._secrets.get("chroma_settings", {}))
+        client_param_kwargs = extract_from_dict(_CHROMA_CLIENT_PARAMS[mode], kwargs)
+        client_params = ChainMap(client_param_kwargs, secrets_params)
+
+        settings_kwargs = ChainMap(kwargs, settings_secrets_params)
         settings = Settings(**settings_kwargs)
 
         if mode == "client":
-            host = client_params.get("chroma_host", "localhost")
-            port = client_params.get("chroma_port", "8000")
-            ssl = client_params.get("chroma_ssl", False)
-            headers = client_params.get("chroma_headers", {})
+            host = client_params.get("host", "localhost")
+            port = client_params.get("port", "8000")
+            ssl = client_params.get("ssl", False)
+            headers = client_params.get("headers", {})
             return chromadb.HttpClient(
                 host=host, port=port, ssl=ssl, headers=headers, settings=settings
             )
         elif mode == "persistent":
-            path = client_params.get("chroma_path", "./chroma")
+            path = client_params.get("path", "./chroma")
             return chromadb.PersistentClient(path=path, settings=settings)
         else:
             return chromadb.EphemeralClient(settings=settings)

@@ -6,9 +6,8 @@ name = "pypi"
 [packages]
 streamlit = "*"
 chromadb = "*"
-pandas = "*"
-install = "*"
 pysqlite3-binary = "*"
+langchain = "*"
 
 [dev-packages]
 flake8 = "*"
