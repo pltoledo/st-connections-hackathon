@@ -1,3 +1,4 @@
-streamlit
-chromadb
-pandas
+chromadb==0.4.2
+langchain==0.0.240
+pandas==2.0.3
+streamlit==1.25.0

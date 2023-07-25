@@ -4,10 +4,11 @@ verify_ssl = true
 name = "pypi"
 
 [packages]
-streamlit = "*"
-chromadb = "*"
-pysqlite3-binary = "*"
-langchain = "*"
+streamlit = ">= 1.25.0, <2.0.0"
+chromadb = ">=0.4.0, <0.5.0"
+pandas = ">= 2.0.0, <2.1.0"
+pysqlite3-binary = "==0.5.0"
+langchain = "==0.0.240"
 
 [dev-packages]
 flake8 = "*"

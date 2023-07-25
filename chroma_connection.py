@@ -6,14 +6,17 @@ from typing import Any, Optional, Union
 import chromadb
 import streamlit as st
 from chromadb import Settings
-from chromadb.utils.embedding_functions import EmbeddingFunction
+from chromadb.utils.embedding_functions import (
+    DefaultEmbeddingFunction,
+    EmbeddingFunction,
+)
 from streamlit.connections import ExperimentalBaseConnection
 from streamlit.connections.util import extract_from_dict
 
 _CHROMA_CLIENT_PARAMS = {
     "in-memory": {},
     "client": {"host", "port", "ssl", "headers"},
-    "persistent": "path",
+    "persistent": {"path"},
 }
 
 
@@ -52,32 +55,47 @@ class ChromaDBConnection(ExperimentalBaseConnection[chromadb.API]):
     def cursor(self):
         return self._instance
 
-    def _get_collection(self, name: str, embedding_function: EmbeddingFunction = None):
+    def _get_collection(
+        self, name: str, embedding_function: EmbeddingFunction = DefaultEmbeddingFunction()
+    ):
         return self.cursor.get_collection(name, embedding_function=embedding_function)
 
     def create(
-        self, name: str, embedding_function: EmbeddingFunction = None, distance_metric: str = "l2"
+        self,
+        name: str,
+        embedding_function: EmbeddingFunction = DefaultEmbeddingFunction(),
+        distance_metric: str = "l2",
     ):
         if distance_metric not in ("l2", "ip", "cosine"):
             raise ValueError(
                 f"Distance metric {distance_metric} not supported. Please choose one of 'l2', 'ip', 'cosine'"
             )
-        self.cursor.create_collection(
+        self.cursor.get_or_create_collection(
             name, embedding_function=embedding_function, metadata={"hnsw:space": distance_metric}
         )
 
-    def drop(self, name: str, embedding_function: EmbeddingFunction = None):
+    def drop(self, name: str, embedding_function: EmbeddingFunction = DefaultEmbeddingFunction()):
         self.cursor.delete_collection(name, embedding_function)
 
-    def count(self, name: str, embedding_function: EmbeddingFunction = None):
+    def count(self, name: str, embedding_function: EmbeddingFunction = DefaultEmbeddingFunction()):
         collection = self._get_collection(name, embedding_function)
         return collection.count()
 
-    def peek(self, name: str, embedding_function: EmbeddingFunction = None):
+    def peek(
+        self,
+        name: str,
+        embedding_function: EmbeddingFunction = DefaultEmbeddingFunction(),
+        **kwargs,
+    ):
         collection = self._get_collection(name, embedding_function)
-        return collection.count()
+        return collection.peek(**kwargs)
 
-    def rename(self, old_name: str, new_name: str, embedding_function: EmbeddingFunction = None):
+    def rename(
+        self,
+        old_name: str,
+        new_name: str,
+        embedding_function: EmbeddingFunction = DefaultEmbeddingFunction(),
+    ):
         collection = self._get_collection(old_name, embedding_function)
         collection.modify(name=new_name)
 
@@ -88,14 +106,19 @@ class ChromaDBConnection(ExperimentalBaseConnection[chromadb.API]):
         embeddings: Optional[list[Union[float, int]]] = None,
         metadatas: Optional[list[dict[str, Any]]] = None,
         ids: Optional[list[str]] = None,
-        embedding_function: EmbeddingFunction = None,
+        embedding_function: EmbeddingFunction = DefaultEmbeddingFunction(),
     ):
         if ids is None:
             ids = [uuid.uuid4().hex for _ in range(len(documents))]
         collection = self._get_collection(name, embedding_function)
         collection.add(documents=documents, embeddings=embeddings, metadatas=metadatas, ids=ids)
 
-    def get(self, name: str, embedding_function: EmbeddingFunction = None, **kwargs):
+    def get(
+        self,
+        name: str,
+        embedding_function: EmbeddingFunction = DefaultEmbeddingFunction(),
+        **kwargs,
+    ):
         collection = self._get_collection(name, embedding_function)
         return collection.get(**kwargs)
 
@@ -105,7 +128,7 @@ class ChromaDBConnection(ExperimentalBaseConnection[chromadb.API]):
         query_vector: list[Union[str, float, int]],
         query_type: str = "text",
         ttl: int = 3600,
-        embedding_function: EmbeddingFunction = None,
+        embedding_function: EmbeddingFunction = DefaultEmbeddingFunction(),
         **kwargs,
     ) -> dict:
         @st.cache_data(ttl=ttl)
@@ -129,7 +152,7 @@ class ChromaDBConnection(ExperimentalBaseConnection[chromadb.API]):
         documents: Optional[list[str]] = None,
         embeddings: Optional[list[Union[float, int]]] = None,
         metadatas: Optional[list[dict[str, Any]]] = None,
-        embedding_function: EmbeddingFunction = None,
+        embedding_function: EmbeddingFunction = DefaultEmbeddingFunction(),
     ):
         collection = self._get_collection(name, embedding_function)
         collection.update(documents=documents, embeddings=embeddings, metadatas=metadatas, ids=ids)
@@ -141,13 +164,17 @@ class ChromaDBConnection(ExperimentalBaseConnection[chromadb.API]):
         documents: Optional[list[str]] = None,
         embeddings: Optional[list[Union[float, int]]] = None,
         metadatas: Optional[list[dict[str, Any]]] = None,
-        embedding_function: EmbeddingFunction = None,
+        embedding_function: EmbeddingFunction = DefaultEmbeddingFunction(),
     ):
         collection = self._get_collection(name, embedding_function)
         collection.upsert(documents=documents, embeddings=embeddings, metadatas=metadatas, ids=ids)
 
     def delete(
-        self, name: str, ids: list[str], embedding_function: EmbeddingFunction = None, **kwargs
+        self,
+        name: str,
+        ids: list[str],
+        embedding_function: EmbeddingFunction = DefaultEmbeddingFunction(),
+        **kwargs,
     ):
         collection = self._get_collection(name, embedding_function)
         collection.delete(ids=ids, **kwargs)
