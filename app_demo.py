@@ -149,11 +149,8 @@ with tabs[0]:
     )
     document_contents = [doc.page_content for doc in documents]
     metadatas = [doc.metadata for doc in documents]
-    if "data_inserted" not in st.session_state:
-        st.session_state["data_inserted"] = False
-    if not st.session_state["data_inserted"]:
+    if conn.count("paul_graham_essay") == 0:
         conn.insert("paul_graham_essay", documents=document_contents, metadatas=metadatas)
-        st.session_state["data_inserted"] = True
     st.write("#### Querying")
     st.write("To query the collection, we can use the `query` method:")
     st.code(
@@ -253,13 +250,10 @@ The directory in which the data will be saved can be controlled by the `path` pa
     persist_conn.create("persisted_paul_graham_essay", distance_metric="cosine")
     document_contents = [doc.page_content for doc in documents]
     metadatas = [doc.metadata for doc in documents]
-    if "persisted_data_inserted" not in st.session_state:
-        st.session_state["persisted_data_inserted"] = False
-    if not st.session_state["persisted_data_inserted"]:
+    if persist_conn.count("persisted_paul_graham_essay") == 0:
         persist_conn.insert(
             "persisted_paul_graham_essay", documents=document_contents, metadatas=metadatas
         )
-        st.session_state["persisted_data_inserted"] = True
     st.write("The `path` parameter can also be specified in the `secrets.toml` file.")
 with tabs[2]:
     st.write(
@@ -325,13 +319,10 @@ Then it is good to go."""
         )
         document_contents = [doc.page_content for doc in documents]
         metadatas = [doc.metadata for doc in documents]
-        if "client_data_inserted" not in st.session_state:
-            st.session_state["client_data_inserted"] = False
-        if not st.session_state["client_data_inserted"]:
+        if client_conn.count("client_paul_graham_essay") == 0:
             client_conn.insert(
                 "client_paul_graham_essay", documents=document_contents, metadatas=metadatas
             )
-            st.session_state["client_data_inserted"] = True
         st.write("Still, it is posible to query the collection normally:")
         query_text = st.text_input(
             "Input query", "What is the secret to success?", key="client-input"
@@ -345,5 +336,5 @@ Then it is good to go."""
         ]
         results_df = pd.DataFrame(results_transformed, columns=["ids", "documents", "metadatas"])
         st.write(results_df)
-    except ConnectionError:
+    except (ConnectionError, Exception):  # Chroma throws bare Exceptions for some reason
         pass
