@@ -117,9 +117,9 @@ with tabs[0]:
     st.write("#### Creating a collection")
     st.write("To code below creates an in-memory client for chroma:")
     st.code(
-        """conn = st.experimental_connection("chroma", type=ChromaDBConnection, mode="in-memory")"""
+        """conn = st.connection("chroma", type=ChromaDBConnection, mode="in-memory")"""
     )
-    conn = st.experimental_connection("chroma", type=ChromaDBConnection, mode="in-memory")
+    conn = st.connection("chroma", type=ChromaDBConnection, mode="in-memory")
     st.write("To create a new collection, we can use the `create` method:")
     st.code("""conn.create('paul_graham_essay', distance_metric='cosine')""")
     st.write(
@@ -225,10 +225,10 @@ The directory in which the data will be saved can be controlled by the `path` pa
     st.write("To create an instance of the persistent Chroma client, one can do the following:")
     st.code(
         """
-    persist_conn = st.experimental_connection("chroma", type=ChromaDBConnection, mode="persistent", path="./chroma")
+    persist_conn = st.connection("chroma", type=ChromaDBConnection, mode="persistent", path="./chroma")
 """
     )
-    persist_conn = st.experimental_connection(
+    persist_conn = st.connection(
         "chroma", type=ChromaDBConnection, mode="persistent", path="./chroma"
     )
     st.write(
@@ -292,13 +292,13 @@ Then it is good to go."""
     st.write("To create an instance of Chroma in client mode:")
     st.code(
         """
-    client_conn = st.experimental_connection("chroma", type=ChromaDBConnection, mode="client")
+    client_conn = st.connection("chroma", type=ChromaDBConnection, mode="client")
 """
     )
     st.write(
         "As in previous examples, we can rely both on the `secrets.toml` file or the constructor parameters to configure the connection."
     )
-    client_conn = st.experimental_connection("chroma", type=ChromaDBConnection, mode="client")
+    client_conn = st.connection("chroma", type=ChromaDBConnection, mode="client")
     try:
         client_conn.create("client_paul_graham_essay", distance_metric="cosine")
         st.write(

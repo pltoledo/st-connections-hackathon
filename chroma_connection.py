@@ -10,7 +10,7 @@ from chromadb.utils.embedding_functions import (
     DefaultEmbeddingFunction,
     EmbeddingFunction,
 )
-from streamlit.connections import ExperimentalBaseConnection
+from streamlit.connections import BaseConnection
 from streamlit.connections.util import extract_from_dict
 
 _CHROMA_CLIENT_PARAMS = {
@@ -20,7 +20,7 @@ _CHROMA_CLIENT_PARAMS = {
 }
 
 
-class ChromaDBConnection(ExperimentalBaseConnection[chromadb.API]):
+class ChromaDBConnection(BaseConnection[chromadb.API]):
     def _connect(self, **kwargs) -> chromadb.Client:
         kwargs = deepcopy(kwargs)
         mode = kwargs.pop("mode", "in-memory")

@@ -4,7 +4,7 @@ verify_ssl = true
 name = "pypi"
 
 [packages]
-streamlit = ">= 1.25.0, <2.0.0"
+streamlit = "*"
 chromadb = ">=0.4.0, <0.5.0"
 pandas = ">= 2.0.0, <2.1.0"
 pysqlite3-binary = "==0.5.0"
