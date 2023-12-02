@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "streamlit_chroma_connection"
-version = "1.0"
+version = "1.1"
 description = "A streamlit connection for Chroma vectorstore"
 readme = "README.md"
 authors = [{ name = "Pedro Toledo", email = "pedroltoledo@gmail.com" }]
@@ -18,7 +18,7 @@ classifiers = [
 keywords = ["streamlit", "connections", "vectorstore", "chroma"]
 dependencies = [
     "streamlit >= 1.28.0, <2.0.0",
-    "chromadb == 4.2",
+    "chromadb == 0.4.2",
     "pandas >= 2.0.0, <2.1.0",
     "pysqlite3-binary == 0.5.0",
     "langchain == 0.0.240",
