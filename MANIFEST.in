@@ -1,3 +1,0 @@
-include data/*.txt
-
-include .streamlit/*.toml
