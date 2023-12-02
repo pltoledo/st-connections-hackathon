@@ -11,7 +11,7 @@ import streamlit as st  # noqa: E402
 from langchain.document_loaders import TextLoader  # noqa: E402
 from langchain.text_splitter import RecursiveCharacterTextSplitter  # noqa: E402
 
-from chroma_connection import ChromaDBConnection  # noqa: E402
+from streamlit_chroma_connection.chroma_connection import ChromaDBConnection  # noqa: E402
 
 st.set_page_config(page_title="ChromaDB Connection Demo", page_icon="🔗")
 
