@@ -338,3 +338,14 @@ Then it is good to go."""
         st.write(results_df)
     except (ConnectionError, Exception):  # Chroma throws bare Exceptions for some reason
         pass
+
+st.write("")
+st.write("")
+st.write("")
+cols = st.columns(10)
+cols[4].markdown(
+    "[![Repo](https://img.icons8.com/material-outlined/48/000000/github.png)](https://github.com/pltoledo/st-connections-hackathon)"
+)
+cols[5].markdown(
+    "[![linkedin](https://img.icons8.com/color/48/linkedin.png)](https://linkedin.com/in/pedro-toledo)"
+)

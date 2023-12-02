@@ -10,7 +10,7 @@
             "module": "streamlit",
             "args": [
                 "run",
-                "streamlit_chroma_connection/app_demo.py",
+                "app_demo.py",
             ],
             "jinja": true
         },
